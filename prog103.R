@@ -48,50 +48,53 @@ avg_hrs_cold("Nuka_Pass", "Late winter")
 # temperatures.
 
 extreme_type <- "cold"
-if (is_extreme == "cold") {
+extreme_type <- "hot"
+if (extreme_type == "cold") {
   is_extreme <- (kefj_temperature <= -4)
-} else if (extreme_type == "hot")
+} else if (extreme_type == "hot") {
   is_extreme <- kefj_temperature >= 25
 }
 
 # P5 Copy-paste the code from P1 and edit it to incorporate the is_extreme
 # vector into the extreme temperature exposure procedure.
 
-n_cold <- sum(kefj_site == site &
+n_extreme <- sum(kefj_site == site &
                 kefj_season == season &
-                kefj_temperature <= -4 &
+                is_extreme &
                 kefj_exposure == "air")
 n_total <- sum(kefj_site == site &
                  kefj_season == season)
-hours_cold <- n_cold * 30 / 60
+hours_extreme <- n_extreme * 30 / 60
 days_total <- n_total * 30 / 60 / 24
-hours_cold_per_day <- hours_cold / days_total
-hours_cold_per_day
-if (is_extreme == "cold") {
-  is_extreme <- (kefj_temperature <= -4)
-} else if (extreme_type == "hot")
-  is_extreme <- kefj_temperature >= 25
-}
+hours_extreme_per_day <- hours_extreme / days_total
+hours_extreme_per_day
+
 # P6 Copy-paste the function you wrote in P3 and edit it to add a parameter that
 # lets you switch between extreme heat and cold exposure.
 
-avg_hrs_cold <- function(site, season) {
-  n_cold <- sum(kefj_site == site &
-                  kefj_season == season &
-                  kefj_temperature <= -4 &
-                  kefj_exposure == "air")
-  n_total <- sum(kefj_site == site &
-                   kefj_season == season)
-  hours_cold <- n_cold * 30 / 60
+hours_ex_pd_function <- function(site, season, extreme_type) {
+  if (extreme_type == "cold") {
+    is_extreme <- (kefj_temperature <= -4)
+  } else if (extreme_type == "hot") {
+    is_extreme <- kefj_temperature >= 25
+  }
+  extreme_function <- sum(kefj_site == site &
+                            kefj_season == season &
+                            is_extreme == TRUE &
+                            kefj_exposure == "air")
+  total_function <- sum(kefj_site == site &
+                          kefj_season == season)
+  hours_extreme <- n_extreme * 30 / 60
   days_total <- n_total * 30 / 60 / 24
-  result <- hours_cold / days_total
-  return(result)
+  hours_extreme_per_day <- hours_extreme / days_total
+  return(extreme_hours_per_day)
+}
 
 # Season to taste ---------------------------------------------------------
 
 # P7 What seasons are in the kefj dataset? What function would you use to
 # identify them?
-kefj_season
+colnames(kefj_season)
   Late winter Spring Summer Fall Early winter
 # P8 Fill in the blanks below to make a for loop that prints the extreme hot and
 # cold exposure across seasons at site Aialik.
@@ -112,7 +115,7 @@ for (i in 1:length(seasons)) {
   cold_exposure <- hours_extreme_per_day(site, seasons[i], "cold")
   print(paste("Aialik", seasons, heat_exposure, cold_exposure))
   }
-
+}
 # P10 Examine your results from P9. You should find two outputs where both
 # extreme heat and cold exposure were 0. What season were they in?
 nuka bay fall and harris fall
